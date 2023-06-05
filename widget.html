@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+  </head>
+
+  <script src="https://live.zwidgets.com/js-sdk/1.1/ZohoEmbededAppSDK.min.js"></script>
+  <style>
+    body{
+      background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMXwXcwzjv6l6kvmR1RLZQFMW2w3fSHxlJ4Q&usqp=CAU");
+      /* background-repeat: no-repeat; */
+      background-size: cover;
+    }
+    h2{
+      width: 100%;
+      padding: 4px;
+      border-radius: 2px 15px ;
+      box-shadow: 2px 2px 10px white;
+      background: brown;
+      text-align: center;
+      font-size: 30px;
+      
+      color: white;
+    }
+    input{
+      /* margin-top: 30px; */
+      margin-left: 60px;
+      width: 500px;
+      font-size: 30px;
+      color: black;
+      border-radius: 2px 15px ;
+      
+    }
+    label{
+      line-height: 60px;
+      /* border-radius: 10px 2px ; */
+      box-shadow: 2px 2px 10px black;
+    
+      
+      /* background: brown; */
+      font-size: 30px;
+      padding: 2px;
+      color: white;
+      opacity: 2;
+    }
+    button{
+      font-size: 20px;
+      height: 40px;
+      width: 200px;
+      margin-top: 20px;
+      float: right;
+      cursor: pointer;
+      background: brown;
+    }
+    .box{
+      width: 200px;
+      height: 300px;
+      padding: 20px;
+      /* margin:0  auto; */
+    }
+  </style>
+  <body>
+    <div class="box">
+    <h2>Create Meeting</h2>
+    <label for="Title">Meeting Title</label>
+    <input type="text" id="title"><br>
+    <label for="location">Location</label>
+    <input type="text" id="Location"><br>
+    <label for="Start meeting">From</label>
+    <input type="datetime-local" id="Start"><br>
+      <label for="End meeting">To</label>
+    <input type="datetime-local" id="End"><br>
+       <button onclick="meeting()">CreateMeeting</button>
+      </div>
+  </body> 
+  <script>
+
+ZOHO.embeddedApp.on("PageLoad",function(data){
+    // console.log(JSON.stringify(data));
+    leadId=data.EntityId[0];
+
+    
+    ZOHO.CRM.API.getRecord({Entity:"Leads",RecordID:leadId})
+.then(function(data){
+
+//  console.log("leaddata===>"+JSON.stringify(data));
+const lastname=data.data[0].Last_Name;
+   const firstname=data.data[0].First_Name;
+   
+   const title=document.getElementById("title").value=firstname+""+lastname;
+    console.log(title)
+
+})
+
+   })
+    function meeting(){
+    const timezone=":00+05:30";
+  
+    const Start=document.getElementById("Start").value;
+    console.log(Start+timezone);
+    const vks=Start+timezone;
+
+    const End=document.getElementById("End").value;
+    console.log(End+timezone);
+    const vke=End+timezone;
+    const location=document.getElementById("Location").value;
+    console.log("location"+location);
+    const title2=title.value;
+    console.log("after clic++++++++++++++++++++++"+title2);
+  
+    
+
+    var recordData = {
+        "Event_Title":title2,
+        "Start_DateTime": vks,
+        "End_DateTime": vke,
+        "Venue":location
+        }
+ZOHO.CRM.API.insertRecord({Entity:"Events",APIData:recordData,Trigger:["workflow"]}).then(function(data){
+	console.log(data);
+	});
+
+ZOHO.CRM.UI.Popup.closeReload()
+.then(function(data){
+    console.log(data)
+})
+}
+ZOHO.embeddedApp.init()
+  </script>
+</html>
+<!-- Start_DateTime":"2023-06-05T12:00:00+05:30
+Start_DateTime": 2023-06-07T11:01:00+05:30 -->
